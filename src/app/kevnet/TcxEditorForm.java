@@ -17,6 +17,7 @@ public class TcxEditorForm {
 
 
   public TcxEditorForm() {
+    txtPath.setText(System.getProperty("user.home"));
     btnRun.addActionListener(e -> {
       TcxParser parser = new TcxParser(txtPath.getText(),
           Double.valueOf(txtDistanceSpeedMultiplier.getText()));
