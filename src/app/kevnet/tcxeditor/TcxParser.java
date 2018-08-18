@@ -1,4 +1,4 @@
-package app.kevnet.TcxEditor;
+package app.kevnet.tcxeditor;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,16 +32,20 @@ public class TcxParser {
   }
 
   /**
-   * Parse the TCX file specified in the UI, modify the data based on the multiplier, and create a
-   * new file in the same directory with "_modified" appended to the file name.
+   * Parse the TCX file specified in the UI, modify the data based on the
+   * multiplier, and create a new file in the same directory with "_modified"
+   * appended to the file name.
    *
-   * @return {@code true} if the process was successful, otherwsie {@code false}.
+   * @return {@code true} if the process was successful, otherwsie {@code
+   * false}.
    */
   public boolean parseFile() {
     try {
       File tcxFile = new File(filePath);
-      DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+      DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
+          .newInstance();
+      DocumentBuilder documentBuilder = documentBuilderFactory
+          .newDocumentBuilder();
       Document document = documentBuilder.parse(tcxFile);
       document.getDocumentElement().normalize();
 
@@ -53,7 +57,8 @@ public class TcxParser {
         maximumSpeed.setTextContent(String.valueOf(value));
       }
 
-      NodeList distanceMetersNodes = document.getElementsByTagName(DISTANCE_METERS);
+      NodeList distanceMetersNodes = document
+          .getElementsByTagName(DISTANCE_METERS);
       for (int i = 0; i < distanceMetersNodes.getLength(); i++) {
         Node distanceMeters = distanceMetersNodes.item(i);
         double value = Double.valueOf(distanceMeters.getTextContent());
@@ -77,9 +82,10 @@ public class TcxParser {
         averageSpeed.setTextContent(String.valueOf(value));
       }
 
-      String newFilePath = filePath.substring(0, filePath.indexOf(TcxEditorForm.EXTENSION));
-      newFilePath = newFilePath.concat(NEW_FILE_SUFFIX + TcxEditorForm.EXTENSION);
-
+      String newFilePath = filePath
+          .substring(0, filePath.indexOf(TcxEditorForm.EXTENSION));
+      newFilePath = newFilePath
+          .concat(NEW_FILE_SUFFIX + TcxEditorForm.EXTENSION);
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
       DOMSource source = new DOMSource(document);

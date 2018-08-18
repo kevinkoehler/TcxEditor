@@ -1,4 +1,4 @@
-package app.kevnet.TcxEditor;
+package app.kevnet.tcxeditor;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -20,20 +20,17 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class TcxEditorForm {
 
   private static final String TITLE = "TCX Editor";
-  private static final String FILE_NAME_FILTER_DESCRIPTION = "Garmin Training Center XML Files";
+  private static final String FILE_NAME_FILTER_DESCRIPTION = "Garmin Training Center XML File";
   private static final String FILE_TYPE = "tcx";
   public static final String EXTENSION = "." + FILE_TYPE;
   private static final String SUCCESS_TITLE = "Success";
-  private static final String SUCCESS_MESSAGE = "TCX file has been parsed successfully."
-      + "Updated file has been saved as _modified.tcx in the same directory as the input file.";
+  private static final String SUCCESS_MESSAGE = "TCX file has been parsed successfully. Updated file has been saved as _modified.tcx in the same directory as the input file.";
   private static final String ERROR_TITLE = "Error";
-  private static final String ERROR_MESSAGE = "Unable to parse file. "
-      + "Please ensure the input file is a valid TCX file.";
+  private static final String ERROR_MESSAGE = "Unable to parse file. Please ensure the input file is a valid TCX file.";
   private static final String INVALID_FILE_TITLE = "Invalid File";
   private static final String INVALID_FILE_MESSAGE = "Please select a valid TCX file.";
   private static final String INVALID_MULTIPLIER = "Invalid Multiplier";
-  private static final String INVALID_MULTIPLIER_MESSAGE =
-      "Please enter a valid number for the multiplier.";
+  private static final String INVALID_MULTIPLIER_MESSAGE = "Please enter a valid number for the multiplier.";
   private static final String USER_HOME_PROPERTY = "user.home";
   private static final String ICON_PATH = "/resources/Icon.png";
   private JLabel lblPath;
@@ -46,22 +43,25 @@ public class TcxEditorForm {
   private JButton btnExit;
 
   /**
-   * UI for the TcxEditor application.
+   * UI for the tcxeditor application.
    */
   public TcxEditorForm() {
     txtPath.setText(System.getProperty(USER_HOME_PROPERTY));
     btnRun.addActionListener(e -> {
       String filePath = txtPath.getText();
-      if (filePath == null || filePath.trim().isEmpty() || !filePath.toLowerCase()
+      if (filePath == null || filePath.trim().isEmpty() || !filePath
+          .toLowerCase()
           .endsWith(EXTENSION)) {
-        JOptionPane.showMessageDialog(null, INVALID_FILE_MESSAGE, INVALID_FILE_TITLE,
-            JOptionPane.WARNING_MESSAGE);
+        JOptionPane
+            .showMessageDialog(null, INVALID_FILE_MESSAGE, INVALID_FILE_TITLE,
+                JOptionPane.WARNING_MESSAGE);
         return;
       }
 
       String multiplier = txtMultiplier.getText();
       if (multiplier == null || multiplier.trim().isEmpty()) {
-        JOptionPane.showMessageDialog(null, INVALID_MULTIPLIER_MESSAGE, INVALID_MULTIPLIER,
+        JOptionPane.showMessageDialog(null, INVALID_MULTIPLIER_MESSAGE,
+            INVALID_MULTIPLIER,
             JOptionPane.WARNING_MESSAGE);
         return;
       }
@@ -71,19 +71,23 @@ public class TcxEditorForm {
         parser = new TcxParser(txtPath.getText(),
             Double.valueOf(txtMultiplier.getText()));
       } catch (NumberFormatException ex) {
-        JOptionPane.showMessageDialog(null, INVALID_MULTIPLIER_MESSAGE, INVALID_MULTIPLIER,
+        JOptionPane.showMessageDialog(null, INVALID_MULTIPLIER_MESSAGE,
+            INVALID_MULTIPLIER,
             JOptionPane.WARNING_MESSAGE);
+        return;
       }
       if (parser != null && parser.parseFile()) {
         JOptionPane.showMessageDialog(null, SUCCESS_MESSAGE, SUCCESS_TITLE,
             JOptionPane.INFORMATION_MESSAGE);
         return;
       }
-      JOptionPane.showMessageDialog(null, ERROR_MESSAGE, ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(null, ERROR_MESSAGE, ERROR_TITLE,
+          JOptionPane.ERROR_MESSAGE);
     });
     btnBrowse.addActionListener(e -> {
       JFileChooser chooser = new JFileChooser();
-      FileFilter filter = new FileNameExtensionFilter(FILE_NAME_FILTER_DESCRIPTION, FILE_TYPE);
+      FileFilter filter = new FileNameExtensionFilter(
+          FILE_NAME_FILTER_DESCRIPTION, FILE_TYPE);
       chooser.setFileFilter(filter);
       String filePath = txtPath.getText();
       if (filePath != null && !filePath.trim().isEmpty()) {
@@ -108,8 +112,8 @@ public class TcxEditorForm {
   /**
    * Main method to start the application.
    *
-   * @param args Provided arguments. TcxEditor does not use any provided arguments to it's main
-   * method.
+   * @param args Provided arguments. tcxeditor does not use any provided
+   * arguments to it's main method.
    */
   public static void main(final String[] args) {
     try {
@@ -122,7 +126,8 @@ public class TcxEditorForm {
     frame.setContentPane(new TcxEditorForm().pnlMain);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     try {
-      frame.setIconImage(ImageIO.read(TcxEditorForm.class.getResource(ICON_PATH)));
+      frame.setIconImage(
+          ImageIO.read(TcxEditorForm.class.getResource(ICON_PATH)));
     } catch (IOException e) {
       e.printStackTrace();
     }
