@@ -1,4 +1,4 @@
-package app.kevnet;
+package app.kevnet.TcxEditor;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,15 +17,27 @@ import org.xml.sax.SAXException;
 
 public class TcxParser {
 
+  private static final String MAXIMUM_SPEED = "MaximumSpeed";
+  private static final String DISTANCE_METERS = "DistanceMeters";
+  private static final String NAMESPACE = "ns3:";
+  private static final String SPEED = NAMESPACE + "Speed";
+  private static final String AVERAGE_SPEED = NAMESPACE + "AvgSpeed";
+  private static final String NEW_FILE_SUFFIX = "_modified";
   private final String filePath;
-  private final double speedDistanceMultiplier;
+  private final double multiplier;
 
-  public TcxParser(String filePath, double speedDistanceMultiplier) {
+  public TcxParser(final String filePath, final double multiplier) {
     this.filePath = filePath;
-    this.speedDistanceMultiplier = speedDistanceMultiplier;
+    this.multiplier = multiplier;
   }
 
-  public void updateFile() {
+  /**
+   * Parse the TCX file specified in the UI, modify the data based on the multiplier, and create a
+   * new file in the same directory with "_modified" appended to the file name.
+   *
+   * @return {@code true} if the process was successful, otherwsie {@code false}.
+   */
+  public boolean parseFile() {
     try {
       File tcxFile = new File(filePath);
       DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -33,49 +45,50 @@ public class TcxParser {
       Document document = documentBuilder.parse(tcxFile);
       document.getDocumentElement().normalize();
 
-      NodeList maximumSpeedNodes = document.getElementsByTagName("MaximumSpeed");
+      NodeList maximumSpeedNodes = document.getElementsByTagName(MAXIMUM_SPEED);
       for (int i = 0; i < maximumSpeedNodes.getLength(); i++) {
         Node maximumSpeed = maximumSpeedNodes.item(i);
         double value = Double.valueOf(maximumSpeed.getTextContent());
-        value = value * speedDistanceMultiplier;
+        value = value * multiplier;
         maximumSpeed.setTextContent(String.valueOf(value));
       }
 
-      NodeList distanceMetersNodes = document.getElementsByTagName("DistanceMeters");
+      NodeList distanceMetersNodes = document.getElementsByTagName(DISTANCE_METERS);
       for (int i = 0; i < distanceMetersNodes.getLength(); i++) {
         Node distanceMeters = distanceMetersNodes.item(i);
         double value = Double.valueOf(distanceMeters.getTextContent());
-        value = value * speedDistanceMultiplier;
+        value = value * multiplier;
         distanceMeters.setTextContent(String.valueOf(value));
       }
 
-      NodeList speedNodes = document.getElementsByTagName("ns3:Speed");
+      NodeList speedNodes = document.getElementsByTagName(SPEED);
       for (int i = 0; i < speedNodes.getLength(); i++) {
         Node speed = speedNodes.item(i);
         double value = Double.valueOf(speed.getTextContent());
-        value = value * speedDistanceMultiplier;
+        value = value * multiplier;
         speed.setTextContent(String.valueOf(value));
       }
 
-      NodeList averageSpeedNodes = document.getElementsByTagName("ns3:AvgSpeed");
+      NodeList averageSpeedNodes = document.getElementsByTagName(AVERAGE_SPEED);
       for (int i = 0; i < averageSpeedNodes.getLength(); i++) {
         Node averageSpeed = averageSpeedNodes.item(i);
         double value = Double.valueOf(averageSpeed.getTextContent());
-        value = value * speedDistanceMultiplier;
+        value = value * multiplier;
         averageSpeed.setTextContent(String.valueOf(value));
       }
 
-      String newFilePath = filePath.substring(0, filePath.indexOf(".tcx"));
-      newFilePath = newFilePath.concat("_new.tcx");
+      String newFilePath = filePath.substring(0, filePath.indexOf(TcxEditorForm.EXTENSION));
+      newFilePath = newFilePath.concat(NEW_FILE_SUFFIX + TcxEditorForm.EXTENSION);
 
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
       DOMSource source = new DOMSource(document);
       StreamResult result = new StreamResult(new File(newFilePath));
       transformer.transform(source, result);
+      return true;
     } catch (IOException | SAXException | TransformerException | ParserConfigurationException e) {
       e.printStackTrace();
     }
-
+    return false;
   }
 }
