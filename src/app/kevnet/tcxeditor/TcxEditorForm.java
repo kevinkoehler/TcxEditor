@@ -19,7 +19,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class TcxEditorForm {
 
-  private static final String TITLE = "TCX Editor";
+  private static final String TITLE = "KevNet TCX Editor";
   private static final String FILE_NAME_FILTER_DESCRIPTION = "Garmin Training Center XML File";
   private static final String FILE_TYPE = "tcx";
   public static final String EXTENSION = "." + FILE_TYPE;
