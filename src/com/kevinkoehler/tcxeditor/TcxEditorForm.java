@@ -1,4 +1,4 @@
-package app.kevnet.tcxeditor;
+package com.kevinkoehler.tcxeditor;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;

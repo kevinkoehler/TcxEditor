@@ -1,4 +1,4 @@
-package app.kevnet.tcxeditor;
+package com.kevinkoehler.tcxeditor;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +31,16 @@ public class TcxParser {
     this.multiplier = multiplier;
   }
 
+  private void updateNodes(Document document, String tagName) {
+    NodeList nodes = document.getElementsByTagName(tagName);
+    for (int i = 0; i < nodes.getLength(); i++) {
+      Node node = nodes.item(i);
+      double value = Double.parseDouble(node.getTextContent());
+      value = value * multiplier;
+      node.setTextContent(String.valueOf(value));
+    }
+  }
+
   /**
    * Parse the TCX file specified in the UI, modify the data based on the
    * multiplier, and create a new file in the same directory with "_modified"
@@ -42,52 +52,19 @@ public class TcxParser {
   public boolean parseFile() {
     try {
       File tcxFile = new File(filePath);
-      DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
-          .newInstance();
-      DocumentBuilder documentBuilder = documentBuilderFactory
-          .newDocumentBuilder();
+      DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
       Document document = documentBuilder.parse(tcxFile);
       document.getDocumentElement().normalize();
-
-      NodeList maximumSpeedNodes = document.getElementsByTagName(MAXIMUM_SPEED);
-      for (int i = 0; i < maximumSpeedNodes.getLength(); i++) {
-        Node maximumSpeed = maximumSpeedNodes.item(i);
-        double value = Double.valueOf(maximumSpeed.getTextContent());
-        value = value * multiplier;
-        maximumSpeed.setTextContent(String.valueOf(value));
-      }
-
-      NodeList distanceMetersNodes = document
-          .getElementsByTagName(DISTANCE_METERS);
-      for (int i = 0; i < distanceMetersNodes.getLength(); i++) {
-        Node distanceMeters = distanceMetersNodes.item(i);
-        double value = Double.valueOf(distanceMeters.getTextContent());
-        value = value * multiplier;
-        distanceMeters.setTextContent(String.valueOf(value));
-      }
-
-      NodeList speedNodes = document.getElementsByTagName(SPEED);
-      for (int i = 0; i < speedNodes.getLength(); i++) {
-        Node speed = speedNodes.item(i);
-        double value = Double.valueOf(speed.getTextContent());
-        value = value * multiplier;
-        speed.setTextContent(String.valueOf(value));
-      }
-
-      NodeList averageSpeedNodes = document.getElementsByTagName(AVERAGE_SPEED);
-      for (int i = 0; i < averageSpeedNodes.getLength(); i++) {
-        Node averageSpeed = averageSpeedNodes.item(i);
-        double value = Double.valueOf(averageSpeed.getTextContent());
-        value = value * multiplier;
-        averageSpeed.setTextContent(String.valueOf(value));
-      }
+      updateNodes(document, MAXIMUM_SPEED);
+      updateNodes(document, DISTANCE_METERS);
+      updateNodes(document, SPEED);
+      updateNodes(document, AVERAGE_SPEED);
 
       String newFilePath = filePath
           .substring(0, filePath.indexOf(TcxEditorForm.EXTENSION));
       newFilePath = newFilePath
           .concat(NEW_FILE_SUFFIX + TcxEditorForm.EXTENSION);
-      TransformerFactory transformerFactory = TransformerFactory.newInstance();
-      Transformer transformer = transformerFactory.newTransformer();
+      Transformer transformer = TransformerFactory.newInstance().newTransformer();
       DOMSource source = new DOMSource(document);
       StreamResult result = new StreamResult(new File(newFilePath));
       transformer.transform(source, result);
